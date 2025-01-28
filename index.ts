@@ -1,7 +1,8 @@
 import { Player } from './types/player';
-import { Point, PointsData, Score } from './types/score';
+import { advantage, Point, PointsData, Score } from './types/score';
 // import { none, Option, some, match as matchOpt } from 'fp-ts/Option';
 // import { pipe } from 'fp-ts/lib/function';
+
 
 // -------- Tooling functions --------- //
 
@@ -29,7 +30,7 @@ export const scoreToString = (score: Score): string =>
   'You can use pattern matching with switch case pattern.';
 
 export const scoreWhenDeuce = (winner: Player): Score => {
-  throw new Error('not implemented');
+  return advantage(winner);
 };
 
 export const scoreWhenAdvantage = (
@@ -49,6 +50,7 @@ export const scoreWhenForty = (
 export const scoreWhenGame = (winner: Player): Score => {
   throw new Error('not implemented');
 };
+
 
 // Exercice 2
 // Tip: You can use pipe function from fp-ts to improve readability.
