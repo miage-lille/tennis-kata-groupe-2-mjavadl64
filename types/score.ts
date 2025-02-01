@@ -23,8 +23,6 @@ export type FortyData = {
   otherPoint: Point; // Points of the other player
 };
 
-
-
 export const love = (): Love => ({
   kind: 'LOVE',
 });
@@ -75,9 +73,12 @@ export const deuce = (): Deuce => ({
   kind: 'DEUCE',
 });
 
-export const forty = (fortyData: FortyData): Forty => ({
+export const forty = (player: Player, otherPoint: Point): Forty => ({
   kind: 'FORTY',
-  fortyData,
+  fortyData: {
+    player,
+    otherPoint,
+  },
 });
 
 export const advantage = (player: Player): Advantage => ({
@@ -85,4 +86,15 @@ export const advantage = (player: Player): Advantage => ({
   player,
 });
 
+export const game = (winner: Player): Game => ({
+  kind: 'GAME',
+  winner,
+});
 
+export const points = (playerTwoPoint:Point, winnerPoint: Point): Points => ({
+  kind: 'POINTS',
+  pointsData:{
+    PLAYER_ONE: winnerPoint,
+    PLAYER_TWO: playerTwoPoint,
+  }
+});
