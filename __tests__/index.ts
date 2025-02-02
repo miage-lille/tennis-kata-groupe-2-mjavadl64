@@ -86,26 +86,35 @@ describe('Tests for transition functions', () => {
         //Other point must be 15
         fc.pre(fortyData.otherPoint.kind === 'FIFTEEN')
         const score = scoreWhenForty(fortyData, winner);
-        const scoreExpected = forty(fortyData.player, thirty());
+        const scoreExpected = forty({player:winner, otherPoint:thirty()});
         expect(score).toStrictEqual(scoreExpected);
       })
     );
     console.log('To fill when we will know how represent Forty');
   });
   // -------------------------TESTS POINTS-------------------------- //
-  test('Given players at 0 or 15 points score kind is still POINTS', () => {
+  test('Given players at 0 or 15 points, score kind remains POINTS', () => {
     fc.assert(
       fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-        if (pointsData.PLAYER_ONE.kind === 'LOVE') {
-          const score = scoreWhenPoint(pointsData, winner);
-          const scoreExpected = points(pointsData.PLAYER_TWO,fifteen());
-          expect(score).toStrictEqual(scoreExpected);
-        } 
-        if (pointsData.PLAYER_ONE.kind === 'FIFTEEN') {
-          const score = scoreWhenPoint(pointsData, winner);
-          const scoreExpected = points(pointsData.PLAYER_TWO,thirty());
-          expect(score).toStrictEqual(scoreExpected);
-        } 
+        const score = scoreWhenPoint(pointsData, winner);
+  
+        if (winner === 'PLAYER_ONE') {
+          if (pointsData.PLAYER_ONE.kind === 'LOVE') {
+            expect(score).toStrictEqual(points({PLAYER_ONE:fifteen(), PLAYER_TWO:pointsData.PLAYER_TWO}));
+          }
+          if (pointsData.PLAYER_ONE.kind === 'FIFTEEN') {
+            expect(score).toStrictEqual(points({PLAYER_ONE:thirty(), PLAYER_TWO:pointsData.PLAYER_TWO}));
+          }
+        }
+  
+        if (winner === 'PLAYER_TWO') {
+          if (pointsData.PLAYER_TWO.kind === 'LOVE') {
+            expect(score).toStrictEqual(points({PLAYER_ONE:pointsData.PLAYER_ONE, PLAYER_TWO:fifteen()}));
+          }
+          if (pointsData.PLAYER_TWO.kind === 'FIFTEEN') {
+            expect(score).toStrictEqual(points({PLAYER_ONE:pointsData.PLAYER_ONE, PLAYER_TWO:thirty()}));
+          }
+        }
       })
     );
   });
@@ -113,10 +122,11 @@ describe('Tests for transition functions', () => {
   test('Given one player at 30 and win, score kind is forty', () => {
     fc.assert(
       fc.property(G.getPoints(), G.getPlayer(), ({ pointsData }, winner) => {
-        fc.pre(pointsData.PLAYER_ONE.kind === 'THIRTY' )
-        const score = scoreWhenPoint(pointsData,winner)
-        const scoreExpected = forty(winner,pointsData.PLAYER_TWO)
-        expect(score).toStrictEqual(scoreExpected);
+        if (pointsData[winner].kind === 'THIRTY') {
+          const score = scoreWhenPoint(pointsData,winner)
+          const scoreExpected = forty({player:winner, otherPoint:pointsData[otherPlayer(winner)]});
+          expect(score).toStrictEqual(scoreExpected);
+        }
       })
     );
   });

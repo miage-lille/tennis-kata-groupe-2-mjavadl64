@@ -81,7 +81,7 @@ export const scoreWhenForty = (
     incrementPoint(currentForty.otherPoint),
     matchOpt(
       () => deuce(),
-      p => forty(currentForty.player, p) as Score
+      p => forty({player:winner, otherPoint:p}) as Score
     )
   );
 };
@@ -94,12 +94,16 @@ export const scoreWhenGame = (winner: Player): Score =>  game(winner);
 // Tip: You can use pipe function from fp-ts to improve readability.
 // See scoreWhenForty function above.
 export const scoreWhenPoint = (current: PointsData, winner: Player): Score => {
-  
   return pipe(
-    incrementPoint(current.PLAYER_ONE),
+    incrementPoint(current[winner]),
     matchOpt(
-      () => forty(winner, current.PLAYER_TWO),
-      p => points(current.PLAYER_TWO, p) as Score
+      () => forty({ player: winner, otherPoint: current[otherPlayer(winner)] }),
+      (newPoint) => points(
+        {
+          ...current,
+          [winner]: newPoint
+        }
+    ) as Score
     )
   );
 };
